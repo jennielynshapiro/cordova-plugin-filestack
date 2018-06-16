@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-filestack" version="0.0.1">
+    <name>Filestack Cordova</name>
+    <description>Filestack plugin for Cordova. Available for Android and iOS.</description>
+    <license>MIT</license>
+    <keywords>cordova, ios, android, filestack</keywords>
+    <author>Jennie Lyn Shapiro</author>
+
+    <dependency id="cordova-plugin-cocoapod-support"/>
+
+    <js-module src="www/FilestackCordova.js" name="device">
+        <clobbers target="filestack" />
+    </js-module>
+
+    <platform name="ios">
+        <pods-config ios-min-version="9.0" use-frameworks="true"/>
+        <pod id="Filestack" />
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="FilestackCordova">
+                <param name="ios-package" value="FilestackCordova"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/ios/FilestackCordova.swift" />
+    </platform>
+
+    <platform name="android">
+
+        <framework src="com.filestack:filestack-android:5.0.0-0.3.0" />
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="FilestackCordova">
+                <param name="android-package" value="com.meldtables.filestackcordova.FilestackCordova"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/FilestackCordova.java" target-dir="src/com/meldtables/filestackcordova" />
+
+    </platform>
+</plugin>

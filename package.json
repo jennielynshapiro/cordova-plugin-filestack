@@ -1,0 +1,7 @@
+{
+  "name": "cordova-plugin-filestack",
+  "version": "0.0.1",
+  "description": "Filestack plugin for Cordova. Available for Android and iOS.",
+  "author": "Jennie Lyn Shapiro <jennielynshapiro@melddatabase.com>",
+  "license": "MIT"
+}
