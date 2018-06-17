@@ -39,7 +39,8 @@ public class FilestackCordova extends CordovaPlugin {
 
 	private void openFilePicker() {
 
-        Intent intent = new Intent(this, FsActivity.class);
+        Context context = cordova.getActivity().getApplicationContext();
+        Intent intent = new Intent(context, FsActivity.class);
 
         Config config = new Config("AVI0HHr8cQuGOboNeE1Gtz", "https://demo.android.filestack.com");
         intent.putExtra(FsConstants.EXTRA_CONFIG, config);
