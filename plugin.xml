@@ -36,7 +36,23 @@
             </feature>
         </config-file>
 
+        <preference name="APP_LINK_HOST" default="demo.android.filestack.com" />
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:name=".EntryActivity">
+
+                <intent-filter android:label="@string/app_name">
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="https" android:host="$APP_LINK_HOST" />
+                </intent-filter>
+
+            </activity>
+        </config-file>
+
         <source-file src="src/android/FilestackCordova.java" target-dir="src/com/meldtables/filestackcordova" />
+        <source-file src="src/android/EntryActivity.java" target-dir="src/com/meldtables/filestackcordova" />
 
     </platform>
 </plugin>
