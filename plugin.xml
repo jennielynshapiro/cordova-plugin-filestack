@@ -39,7 +39,7 @@
         <preference name="APP_LINK_HOST" default="app.meldtables.com" />
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name=".EntryActivity">
+            <activity android:name="com.meldtables.filestackcordova.EntryActivity">
 
                 <intent-filter android:label="@string/app_name" android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
