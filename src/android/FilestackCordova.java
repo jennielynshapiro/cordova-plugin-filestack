@@ -43,7 +43,7 @@ public class FilestackCordova extends CordovaPlugin {
     	}
 	}
 
-	private void openFilePicker(apiKey, returnUrl) {
+	private void openFilePicker(String apiKey, String returnUrl) {
 
         final FilestackCordova me = this;
 
