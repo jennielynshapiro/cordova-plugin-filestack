@@ -20,6 +20,8 @@ public class FilestackCordova extends CordovaPlugin {
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+   	 	Log.v("FilestackCordova", "execute");
+
    	 	if (action.equals("openFilePicker")) {
      	   String message = args.getString(0);
     	    this.echo(message, callbackContext);
@@ -39,13 +41,24 @@ public class FilestackCordova extends CordovaPlugin {
 
 	private void openFilePicker() {
 
+        final FilestackCordova me = this;
+
+        this.cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+
+
+        Log.v("FilestackCordova", "openFilePicker");
+
         Context context = cordova.getActivity().getApplicationContext();
         Intent intent = new Intent(context, FsActivity.class);
 
         Config config = new Config("AVI0HHr8cQuGOboNeE1Gtz", "https://demo.android.filestack.com");
         intent.putExtra(FsConstants.EXTRA_CONFIG, config);
 
-        cordova.startActivityForResult((CordovaPlugin) this, intent, REQUEST_FILESTACK);
+        cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
 
+
+            }
+        });
 	}
 }
