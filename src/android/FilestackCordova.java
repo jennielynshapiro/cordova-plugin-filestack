@@ -26,9 +26,10 @@ public class FilestackCordova extends CordovaPlugin {
    	 	Log.v("FilestackCordova", "execute");
 
    	 	if (action.equals("openFilePicker")) {
-     	   String message = args.getString(0);
-    	    this.echo(message, callbackContext);
-    	    this.openFilePicker();
+     	   String apiKey = args.getString(0);
+     	   String returnUrl = args.getString(1);
+    	    this.echo(apiKey + " " + returnUrl, callbackContext);
+    	    this.openFilePicker(apiKey, returnUrl);
     	    return true;
    	 	}
    	 	return false;
@@ -42,7 +43,7 @@ public class FilestackCordova extends CordovaPlugin {
     	}
 	}
 
-	private void openFilePicker() {
+	private void openFilePicker(apiKey, returnUrl) {
 
         final FilestackCordova me = this;
 
@@ -55,7 +56,7 @@ public class FilestackCordova extends CordovaPlugin {
         Context context = cordova.getActivity().getApplicationContext();
         Intent intent = new Intent(context, FsActivity.class);
 
-        Config config = new Config("AVI0HHr8cQuGOboNeE1Gtz", "https://demo.android.filestack.com");
+        Config config = new Config(apiKey, returnUrl);
         intent.putExtra(FsConstants.EXTRA_CONFIG, config);
 
         ArrayList<String> sources = new ArrayList<>();
