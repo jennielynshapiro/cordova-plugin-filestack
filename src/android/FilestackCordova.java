@@ -13,6 +13,9 @@ import android.content.Intent;
 import com.filestack.Config;
 import com.filestack.android.FsActivity;
 import com.filestack.android.FsConstants;
+import com.filestack.Sources;
+
+import java.util.ArrayList;
 
 public class FilestackCordova extends CordovaPlugin {
 
@@ -54,6 +57,12 @@ public class FilestackCordova extends CordovaPlugin {
 
         Config config = new Config("AVI0HHr8cQuGOboNeE1Gtz", "https://demo.android.filestack.com");
         intent.putExtra(FsConstants.EXTRA_CONFIG, config);
+
+        ArrayList<String> sources = new ArrayList<>();
+        sources.add(Sources.DEVICE);
+        sources.add(Sources.GOOGLE_DRIVE);
+        sources.add(Sources.GITHUB);
+        intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
 
         cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
 
