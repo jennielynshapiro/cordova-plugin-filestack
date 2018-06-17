@@ -28,7 +28,9 @@
 
     <platform name="android">
 
-        <framework src="com.filestack:filestack-android:5.0.0-0.6.0" />
+        <framework src="com.filestack:filestack-android:5.0.0-0.3.0" />
+        <framework src="com.android.support:support-v4:27.1.1" />
+
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FilestackCordova">
                 <param name="android-package" value="com.meldtables.filestackcordova.FilestackCordova"/>
