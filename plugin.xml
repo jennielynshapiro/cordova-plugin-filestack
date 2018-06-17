@@ -36,7 +36,7 @@
             </feature>
         </config-file>
 
-        <preference name="APP_LINK_HOST" default="demo.android.filestack.com" />
+        <preference name="APP_LINK_HOST" default="app.meldtables.com" />
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name=".EntryActivity">
