@@ -15,10 +15,12 @@ import com.filestack.android.FsActivity;
 import com.filestack.android.FsConstants;
 import com.filestack.Sources;
 import com.filestack.android.Selection;
+import java.util.Locale;
 
 import android.app.Activity;
 
 import java.util.ArrayList;
+
 
 public class FilestackCordova extends CordovaPlugin {
 
@@ -80,6 +82,7 @@ public class FilestackCordova extends CordovaPlugin {
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             Log.i("FilestackCordova", "onActivityResult");
+            Locale locale = Locale.getDefault();
 
             if (requestCode == REQUEST_FILESTACK && resultCode == Activity.RESULT_OK) {
                 Log.i("FilestackCordova", "received filestack selections");
