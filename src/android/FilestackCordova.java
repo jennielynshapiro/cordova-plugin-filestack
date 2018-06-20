@@ -88,7 +88,7 @@ public class FilestackCordova extends CordovaPlugin {
                 for (int i = 0; i < selections.size(); i++) {
                     Selection selection = selections.get(i);
                     String msg = String.format(locale, "selection %d: %s", i, selection.getName());
-                    Log.i(TAG, msg);
+                    Log.i("FilestackCordova", msg);
                 }
             }
 
