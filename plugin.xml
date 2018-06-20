@@ -50,8 +50,19 @@
                 </intent-filter>
 
             </activity>
+
+            <provider
+                    android:name="android.support.v4.content.FileProvider"
+                    android:authorities="com.filestack.android.demo.fileprovider"
+                    android:exported="false"
+                    android:grantUriPermissions="true">
+                <meta-data
+                        android:name="android.support.FILE_PROVIDER_PATHS"
+                        android:resource="@xml/file_paths" />
+            </provider>
         </config-file>
 
+        <source-file src="src/android/file_paths.xml" target-dir="res/xml/file_paths.xml" />
         <source-file src="src/android/FilestackCordova.java" target-dir="src/com/meldtables/filestackcordova" />
         <source-file src="src/android/EntryActivity.java" target-dir="src/com/meldtables/filestackcordova" />
 

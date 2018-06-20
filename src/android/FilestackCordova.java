@@ -14,6 +14,9 @@ import com.filestack.Config;
 import com.filestack.android.FsActivity;
 import com.filestack.android.FsConstants;
 import com.filestack.Sources;
+import com.filestack.android.Selection;
+
+import android.app.Activity;
 
 import java.util.ArrayList;
 
@@ -51,24 +54,61 @@ public class FilestackCordova extends CordovaPlugin {
             public void run() {
 
 
-        Log.v("FilestackCordova", "openFilePicker");
+                Log.v("FilestackCordova", "openFilePicker");
 
-        Context context = cordova.getActivity().getApplicationContext();
-        Intent intent = new Intent(context, FsActivity.class);
+                Context context = cordova.getActivity().getApplicationContext();
+                Intent intent = new Intent(context, FsActivity.class);
 
-        Config config = new Config(apiKey, returnUrl);
-        intent.putExtra(FsConstants.EXTRA_CONFIG, config);
+                Config config = new Config(apiKey, returnUrl);
+                intent.putExtra(FsConstants.EXTRA_CONFIG, config);
 
-        ArrayList<String> sources = new ArrayList<>();
-        sources.add(Sources.DEVICE);
-        sources.add(Sources.GOOGLE_DRIVE);
-        sources.add(Sources.GITHUB);
-        intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
+                ArrayList<String> sources = new ArrayList<>();
+                sources.add(Sources.DEVICE);
+                sources.add(Sources.GOOGLE_DRIVE);
+                sources.add(Sources.GITHUB);
+                intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
 
-        cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
+                cordova.setActivityResultCallback(me);
+                cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
 
 
             }
         });
 	}
+
+	    @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            Log.i("FilestackCordova", "onActivityResult");
+
+            if (requestCode == REQUEST_FILESTACK && resultCode == Activity.RESULT_OK) {
+                Log.i("FilestackCordova", "received filestack selections");
+                String key = FsConstants.EXTRA_SELECTION_LIST;
+                ArrayList<Selection> selections = data.getParcelableArrayListExtra(key);
+                for (int i = 0; i < selections.size(); i++) {
+                    Selection selection = selections.get(i);
+                    String msg = String.format(locale, "selection %d: %s", i, selection.getName());
+                    Log.i(TAG, msg);
+                }
+            }
+
+            /**
+            if (requestCode == Filepicker.REQUEST_CODE_GETFILE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<FPFile> fpFiles = data.getParcelableArrayListExtra(Filepicker.FPFILES_EXTRA);
+                    try{
+                        callbackContext.success(toJSON(fpFiles)); // Filepicker always returns array of FPFile objects
+                    }
+                    catch(JSONException exception) {
+                        callbackContext.error("json exception");
+                    }
+                } else {
+                    callbackContext.error("nok");
+                }
+            }
+            else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+            **/
+        }
 }
