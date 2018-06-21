@@ -7,13 +7,16 @@
     <keywords>cordova, ios, android, filestack</keywords>
     <author>Jennie Lyn Shapiro</author>
 
-    <dependency id="cordova-plugin-cocoapod-support"/>
+
 
     <js-module src="www/FilestackCordova.js" name="device">
         <clobbers target="filestack" />
     </js-module>
 
     <platform name="ios">
+        <dependency id="cordova-plugin-cocoapod-support"/>
+        <dependency id="cordova-plugin-add-swift-support"/>
+
         <pods-config ios-min-version="9.0" use-frameworks="true"/>
         <pod id="Filestack" />
 
