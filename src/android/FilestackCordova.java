@@ -29,6 +29,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.content.BroadcastReceiver;
 
+import java.util.HashMap;
+
 public class FilestackCordova extends CordovaPlugin {
 
     static final int REQUEST_FILESTACK = 1111;
