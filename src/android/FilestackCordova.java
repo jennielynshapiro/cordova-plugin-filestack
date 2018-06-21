@@ -158,37 +158,55 @@ public class FilestackCordova extends CordovaPlugin {
 
                 // get callback context
 
+                if(selection == null) {
+                    return;
+                }
 
-                if(fileLink != null) {
+                if(fileLink == null) {
+                    return;
+                }
 
                     CallbackContext selectionCallbackContext = selectionCallbacks.remove(getSelectionKey(selection));
+
                     Log.i("FilestackCordova", "selectionCallbackContext: " + (selectionCallbackContext != null ? selectionCallbackContext.toString() : "null"));
 
+                    if(!selectionCallbackContext) {
+                        return;
+                    }
+
                     try {
-                    JSONObject jsonResult = toJSON(selection, fileLink);
 
+                    JSONObject selectionJson = selectionToJson(selection, fileLink);
 
-
-                        // callbackContext.success(jsonResult);
-
-
+                    if(selectionCallbacks.containsValue(selectionCallbackContext)) {
 
                         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonResult);
                         pluginResult.setKeepCallback(true); // keep callback
-                        callbackContext.sendPluginResult(pluginResult);
+                        selectionCallbackContext.sendPluginResult(resultToJson(selectionJson, false));
 
+                    } else {
 
+                        selectionCallbackContext.success(resultToJson(selectionJson, true));
+
+                    }
 
                     } catch(JSONException exception) {
                         callbackContext.error("cannot parse json");
                     }
 
-                }
+
 
             }
         }
 
-    public JSONObject toJSON(Selection selection, FileLink fileLink) throws JSONException {
+    public JSONObject resultToJson(JSONObject selectionJson, boolean complete) throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("file", selectionJson);
+        res.put("complete", complete);
+        return res;
+    }
+
+    public JSONObject selectionToJson(Selection selection, FileLink fileLink) throws JSONException {
 
         JSONObject res = new JSONObject();
 
