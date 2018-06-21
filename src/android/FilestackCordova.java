@@ -29,8 +29,6 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.content.BroadcastReceiver;
 
-import java.util.HashMap;
-
 public class FilestackCordova extends CordovaPlugin {
 
     static final int REQUEST_FILESTACK = 1111;
@@ -49,7 +47,6 @@ public class FilestackCordova extends CordovaPlugin {
     }
 
     private CallbackContext callbackContext;
-    private HashMap<Selection, CallbackContext> selectionCallbacks = new HashMap<Selection, CallbackContext>();
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -120,7 +117,7 @@ public class FilestackCordova extends CordovaPlugin {
                 for (int i = 0; i < selections.size(); i++) {
                     Selection selection = selections.get(i);
                     String msg = String.format(locale, "selection %d: %s", i, selection.getName());
-                    this.selectionCallbacks.put(selection, this.callbackContext);
+
                     Log.i("FilestackCordova", msg);
                 }
             }
@@ -147,22 +144,20 @@ public class FilestackCordova extends CordovaPlugin {
 
                 if(fileLink != null) {
 
-                    CallbackContext callbackContext = selectionCallbacks.remove(selection);
-
                     try {
                     JSONObject jsonResult = toJSON(selection, fileLink);
 
-                    if(!selectionCallbacks.containsValue(callbackContext)) {
 
-                        callbackContext.success(jsonResult);
 
-                    } else {
+                        // callbackContext.success(jsonResult);
+
+
 
                         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonResult);
                         pluginResult.setKeepCallback(true); // keep callback
                         callbackContext.sendPluginResult(pluginResult);
 
-                    }
+
 
                     } catch(JSONException exception) {
                         callbackContext.error("cannot parse json");
