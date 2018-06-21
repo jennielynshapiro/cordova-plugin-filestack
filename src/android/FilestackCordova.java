@@ -130,7 +130,7 @@ public class FilestackCordova extends CordovaPlugin {
 
         }
 
-        private getSelectionKey(Selection selection) {
+        private String getSelectionKey(Selection selection) {
             String key = "";
             if(selection.getPath() != null) {
                 key = selection.getPath();
