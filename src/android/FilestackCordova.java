@@ -170,7 +170,7 @@ public class FilestackCordova extends CordovaPlugin {
 
                     Log.i("FilestackCordova", "selectionCallbackContext: " + (selectionCallbackContext != null ? selectionCallbackContext.toString() : "null"));
 
-                    if(!selectionCallbackContext) {
+                    if(selectionCallbackContext == null) {
                         return;
                     }
 
@@ -180,9 +180,9 @@ public class FilestackCordova extends CordovaPlugin {
 
                     if(selectionCallbacks.containsValue(selectionCallbackContext)) {
 
-                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonResult);
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, resultToJson(selectionJson, false));
                         pluginResult.setKeepCallback(true); // keep callback
-                        selectionCallbackContext.sendPluginResult(resultToJson(selectionJson, false));
+                        selectionCallbackContext.sendPluginResult(pluginResult);
 
                     } else {
 
