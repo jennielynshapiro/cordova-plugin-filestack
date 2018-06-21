@@ -70,6 +70,9 @@ public class FilestackCordova extends CordovaPlugin {
                 sources.add(Sources.GITHUB);
                 intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
 
+                String[] mimeTypes = {"*"};
+                intent.putExtra(FsConstants.EXTRA_MIME_TYPES, mimeTypes);
+
                 cordova.setActivityResultCallback(me);
                 cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
 
