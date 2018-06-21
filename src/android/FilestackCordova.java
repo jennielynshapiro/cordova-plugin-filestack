@@ -50,7 +50,7 @@ public class FilestackCordova extends CordovaPlugin {
 
     private CallbackContext callbackContext;
 
-    private HashMap<String, CallbackContext> selectionCallbacks = new HashMap<Selection, CallbackContext>();
+    private HashMap<String, CallbackContext> selectionCallbacks = new HashMap<String, CallbackContext>();
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
