@@ -196,7 +196,7 @@ public class FilestackCordova extends CordovaPlugin {
             if(selection.getProvider() != null) { res.put("provider", selection.getProvider()); }
             if(selection.getPath() != null) { res.put("path", selection.getPath()); }
             if(selection.getUri() != null) { res.put("uri", selection.getUri().toString()); }
-            if(selection.getSize() != null) { res.put("size", selection.getSize()); }
+            res.put("size", selection.getSize());
             if(selection.getMimeType() != null) { res.put("mimeType", selection.getMimeType()); }
             if(selection.getName() != null) { res.put("name", selection.getName()); }
         }
