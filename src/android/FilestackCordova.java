@@ -147,12 +147,12 @@ public class FilestackCordova extends CordovaPlugin {
 
                 if(fileLink != null) {
 
-                    CallbackContext callbackContext = this.selectionCallbacks.remove(selection);
+                    CallbackContext callbackContext = selectionCallbacks.remove(selection);
 
                     try {
                     JSONObject jsonResult = toJSON(selection, fileLink);
 
-                    if(!this.selectionCallbacks.containsValue(callbackContext)) {
+                    if(!selectionCallbacks.containsValue(callbackContext)) {
 
                         callbackContext.success(jsonResult);
 
