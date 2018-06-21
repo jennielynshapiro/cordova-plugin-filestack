@@ -29,6 +29,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.content.BroadcastReceiver;
 
+import java.util.HashMap;
+
 public class FilestackCordova extends CordovaPlugin {
 
     static final int REQUEST_FILESTACK = 1111;
@@ -47,6 +49,8 @@ public class FilestackCordova extends CordovaPlugin {
     }
 
     private CallbackContext callbackContext;
+
+    private HashMap<String, CallbackContext> selectionCallbacks = new HashMap<Selection, CallbackContext>();
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -118,10 +122,23 @@ public class FilestackCordova extends CordovaPlugin {
                     Selection selection = selections.get(i);
                     String msg = String.format(locale, "selection %d: %s", i, selection.getName());
 
+                    selectionCallbacks.put(getSelectionKey(selection), callbackContext);
+
                     Log.i("FilestackCordova", msg);
                 }
             }
 
+        }
+
+        private getSelectionKey(Selection selection) {
+            String key = "";
+            if(selection.getPath() != null) {
+                key = selection.getPath();
+            } else if(selection.getUri() != null) {
+                key = selection.getUri().toString();
+            }
+            Log.i("FilestackCordova", "selection key: " + key);
+            return key;
         }
 
         public class UploadStatusReceiver extends BroadcastReceiver {
@@ -143,6 +160,9 @@ public class FilestackCordova extends CordovaPlugin {
 
 
                 if(fileLink != null) {
+
+                    CallbackContext selectionCallbackContext = selectionCallbacks.remove(getSelectionKey(selection));
+                    Log.i("FilestackCordova", "selectionCallbackContext: " + (selectionCallbackContext != null ? selectionCallbackContext.toString() : "null"));
 
                     try {
                     JSONObject jsonResult = toJSON(selection, fileLink);
@@ -169,17 +189,24 @@ public class FilestackCordova extends CordovaPlugin {
         }
 
     public JSONObject toJSON(Selection selection, FileLink fileLink) throws JSONException {
+
         JSONObject res = new JSONObject();
 
-        res.put("provider", selection.getProvider());
-        res.put("path", selection.getPath());
-        res.put("uri", selection.getUri().toString());
-        res.put("size", selection.getSize());
-        res.put("mimeType", selection.getMimeType());
-        res.put("name", selection.getName());
-        res.put("fileLink", fileLink.getHandle());
+        if(selection != null) {
+            if(selection.getProvider() != null) { res.put("provider", selection.getProvider()); }
+            if(selection.getPath() != null) { res.put("path", selection.getPath()); }
+            if(selection.getUri() != null) { res.put("uri", selection.getUri().toString()); }
+            if(selection.getSize() != null) { res.put("size", selection.getSize()); }
+            if(selection.getMimeType() != null) { res.put("mimeType", selection.getMimeType()); }
+            if(selection.getName() != null) { res.put("name", selection.getName()); }
+        }
+
+        if(fileLink != null) {
+            if(fileLink.getHandle() != null) { res.put("fileLink", fileLink.getHandle()); }
+        }
 
         return res;
+
     }
 
         // adb logcat -s "UploadStatusReceiver","FilestackCordova"
