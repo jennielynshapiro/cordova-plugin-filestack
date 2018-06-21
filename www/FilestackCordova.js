@@ -4,6 +4,8 @@ function parseParams(params) {
     var a = [];
     a.push(params.apiKey || null);
     a.push(params.returnUrl || null);
+    a.push(params.sources || null);
+    a.push(params.mimeTypes || null);
     return a;
 }
 

@@ -15,16 +15,32 @@ import com.filestack.android.FsActivity;
 import com.filestack.android.FsConstants;
 import com.filestack.Sources;
 import com.filestack.android.Selection;
+import com.filestack.FileLink;
+
 import java.util.Locale;
 
 import android.app.Activity;
 
 import java.util.ArrayList;
 
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.content.BroadcastReceiver;
 
 public class FilestackCordova extends CordovaPlugin {
 
     static final int REQUEST_FILESTACK = 1111;
+
+    @Override
+    protected void pluginInitialize() {
+        super.pluginInitialize();
+
+        IntentFilter intentFilter = new IntentFilter(FsConstants.BROADCAST_UPLOAD);
+        UploadStatusReceiver receiver = new UploadStatusReceiver();
+
+        Context context = cordova.getActivity().getApplicationContext();
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
+    }
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -116,5 +132,21 @@ public class FilestackCordova extends CordovaPlugin {
                 super.onActivityResult(requestCode, resultCode, data);
             }
             **/
+        }
+
+        public class UploadStatusReceiver extends BroadcastReceiver {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Locale locale = Locale.getDefault();
+                String status = intent.getStringExtra(FsConstants.EXTRA_STATUS);
+                Selection selection = intent.getParcelableExtra(FsConstants.EXTRA_SELECTION);
+                FileLink fileLink = (FileLink) intent.getSerializableExtra(FsConstants.EXTRA_FILE_LINK);
+
+                String name = selection.getName();
+                String handle = fileLink != null ? fileLink.getHandle() : "n/a";
+                String msg = String.format(locale, "upload %s: %s (%s)", status, name, handle);
+                Log.i("UploadStatusReceiver", msg);
+            }
         }
 }
