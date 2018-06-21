@@ -2,9 +2,11 @@ package com.meldtables.filestackcordova;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.util.Log;
 import android.content.Context;
@@ -35,6 +37,8 @@ public class FilestackCordova extends CordovaPlugin {
     protected void pluginInitialize() {
         super.pluginInitialize();
 
+        Log.i("FilestackCordova", "registerReceiver");
+
         IntentFilter intentFilter = new IntentFilter(FsConstants.BROADCAST_UPLOAD);
         UploadStatusReceiver receiver = new UploadStatusReceiver();
 
@@ -42,26 +46,29 @@ public class FilestackCordova extends CordovaPlugin {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
     }
 
+    private CallbackContext callbackContext;
+    private HashMap<Selection, CallbackContext> selectionCallbacks = new HashMap<Selection, CallbackContext>();
+
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
    	 	Log.v("FilestackCordova", "execute");
 
+   	 	this.callbackContext = callbackContext;
+
    	 	if (action.equals("openFilePicker")) {
      	   String apiKey = args.getString(0);
      	   String returnUrl = args.getString(1);
-    	    this.echo(apiKey + " " + returnUrl, callbackContext);
-    	    this.openFilePicker(apiKey, returnUrl);
-    	    return true;
-   	 	}
-   	 	return false;
-	}
 
-	private void echo(String message, CallbackContext callbackContext) {
-   	 	if (message != null && message.length() > 0) {
-    	    callbackContext.success(message);
-    	} else {
-    	    callbackContext.error("Expected one non-empty string argument.");
-    	}
+    	   this.openFilePicker(apiKey, returnUrl);
+
+    	   PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT);
+           pluginResult.setKeepCallback(true);
+           callbackContext.sendPluginResult(pluginResult);
+
+    	   return true;
+   	 	}
+
+   	 	return false;
 	}
 
 	private void openFilePicker(String apiKey, String returnUrl) {
@@ -99,8 +106,9 @@ public class FilestackCordova extends CordovaPlugin {
 
 	    @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
             super.onActivityResult(requestCode, resultCode, data);
-            Log.i("FilestackCordova", "onActivityResult");
+            Log.i("FilestackCordova", "onActivityResult " + resultCode);
             Locale locale = Locale.getDefault();
 
             if (requestCode == REQUEST_FILESTACK && resultCode == Activity.RESULT_OK) {
@@ -110,28 +118,11 @@ public class FilestackCordova extends CordovaPlugin {
                 for (int i = 0; i < selections.size(); i++) {
                     Selection selection = selections.get(i);
                     String msg = String.format(locale, "selection %d: %s", i, selection.getName());
+                    this.selectionCallbacks.put(selection, this.callbackContext);
                     Log.i("FilestackCordova", msg);
                 }
             }
 
-            /**
-            if (requestCode == Filepicker.REQUEST_CODE_GETFILE) {
-                if (resultCode == Activity.RESULT_OK) {
-                    ArrayList<FPFile> fpFiles = data.getParcelableArrayListExtra(Filepicker.FPFILES_EXTRA);
-                    try{
-                        callbackContext.success(toJSON(fpFiles)); // Filepicker always returns array of FPFile objects
-                    }
-                    catch(JSONException exception) {
-                        callbackContext.error("json exception");
-                    }
-                } else {
-                    callbackContext.error("nok");
-                }
-            }
-            else {
-                super.onActivityResult(requestCode, resultCode, data);
-            }
-            **/
         }
 
         public class UploadStatusReceiver extends BroadcastReceiver {
@@ -147,6 +138,52 @@ public class FilestackCordova extends CordovaPlugin {
                 String handle = fileLink != null ? fileLink.getHandle() : "n/a";
                 String msg = String.format(locale, "upload %s: %s (%s)", status, name, handle);
                 Log.i("UploadStatusReceiver", msg);
+
+
+                // get callback context
+
+
+                if(fileLink != null) {
+
+                    CallbackContext callbackContext = this.selectionCallbacks.remove(selection);
+
+                    try {
+                    JSONObject jsonResult = toJSON(selection, fileLink);
+
+                    if(!this.selectionCallbacks.containsValue(callbackContext)) {
+
+                        callbackContext.success(jsonResult);
+
+                    } else {
+
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonResult);
+                        pluginResult.setKeepCallback(true); // keep callback
+                        callbackContext.sendPluginResult(pluginResult);
+
+                    }
+
+                    } catch(JSONException exception) {
+                        callbackContext.error("cannot parse json");
+                    }
+
+                }
+
             }
         }
+
+    public JSONObject toJSON(Selection selection, FileLink fileLink) throws JSONException {
+        JSONObject res = new JSONObject();
+
+        res.put("provider", selection.getProvider());
+        res.put("path", selection.getPath());
+        res.put("uri", selection.getUri().toString());
+        res.put("size", selection.getSize());
+        res.put("mimeType", selection.getMimeType());
+        res.put("name", selection.getName());
+        res.put("fileLink", fileLink.getHandle());
+
+        return res;
+    }
+
+        // adb logcat -s "UploadStatusReceiver","FilestackCordova"
 }

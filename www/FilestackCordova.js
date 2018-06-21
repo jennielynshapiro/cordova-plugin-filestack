@@ -12,13 +12,13 @@ function parseParams(params) {
 var filestack = {
     openFilePicker: function(params, callback) {
         exec(
-            function() {
+            function(result) {
                 // result
-                callback(null, null);
+                callback(null, result);
             },
-            function() {
+            function(error) {
                 // error
-                callback('Error', null);
+                callback({error: error}, null);
             },
             "FilestackCordova",
             "openFilePicker",
