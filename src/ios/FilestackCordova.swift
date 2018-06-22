@@ -31,36 +31,37 @@ class FilestackCordova : CDVPlugin {
     
     func presentPicker(filestackAPIKey: String) {
         
+        self.commandDelegate!.run(inBackground: {
+            let config = Filestack.Config()
 
-        let config = Filestack.Config()
-    
-        config.appURLScheme = "meldtables"
+            config.appURLScheme = "meldtables"
 
-        config.videoQuality = .typeHigh
-        
-        if #available(iOS 11.0, *) {
-            config.imageURLExportPreset = .current
-            //config.videoExportPreset = AVAssetExportPresetHEVCHighestQuality
-        }
-        
+            config.videoQuality = .typeHigh
 
-        config.availableLocalSources = LocalSource.all()
-        
-        config.availableCloudSources = CloudSource.all()
-        
-        config.documentPickerAllowedUTIs = ["public.item"]
-        
-        let client = Filestack.Client(apiKey: filestackAPIKey, config: config)
-        
-        let storeOptions = StorageOptions(location: .s3)
-        
-        let picker = client.picker(storeOptions: storeOptions)
-        
-        // Optional. Set the picker's delegate.
-        picker.pickerDelegate = self
-        
-        // Finally, present the picker on the screen.
-        self.viewController?.present(picker, animated: true)
+            if #available(iOS 11.0, *) {
+                config.imageURLExportPreset = .current
+                //config.videoExportPreset = AVAssetExportPresetHEVCHighestQuality
+            }
+
+
+            config.availableLocalSources = LocalSource.all()
+
+            config.availableCloudSources = CloudSource.all()
+
+            config.documentPickerAllowedUTIs = ["public.item"]
+
+            let client = Filestack.Client(apiKey: filestackAPIKey, config: config)
+
+            let storeOptions = StorageOptions(location: .s3)
+
+            let picker = client.picker(storeOptions: storeOptions)
+
+            // Optional. Set the picker's delegate.
+            picker.pickerDelegate = self
+
+            // Finally, present the picker on the screen.
+            self.viewController?.present(picker, animated: true)
+        })
     }
 
 }
