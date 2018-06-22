@@ -1,3 +1,6 @@
+import Filestack
+import FilestackSDK
+
 @objc(FilestackCordova)
 class FilestackCordova : CDVPlugin {
 

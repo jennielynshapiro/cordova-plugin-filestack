@@ -26,7 +26,6 @@
             </feature>
         </config-file>
 
-        <header-file src="src/ios/FilestackCordova-Bridging-Header.h"/>
         <source-file src="src/ios/FilestackCordova.swift" />
     </platform>
 
