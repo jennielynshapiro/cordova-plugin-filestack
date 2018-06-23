@@ -5,6 +5,7 @@ import FilestackSDK
 class FilestackCordova : CDVPlugin {
 
     var currentCallbackId:String = ""
+    var currentPicker:PickerNavigationController?
 
     @objc(openFilePicker:)
     func openFilePicker(command: CDVInvokedUrlCommand) {
@@ -54,13 +55,13 @@ class FilestackCordova : CDVPlugin {
 
         let storeOptions = StorageOptions(location: .s3)
 
-        let picker = client.picker(storeOptions: storeOptions)
+        self.currentPicker = client.picker(storeOptions: storeOptions)
 
         // Optional. Set the picker's delegate.
-        picker.pickerDelegate = self
+        self.currentPicker?.pickerDelegate = self
 
         // Finally, present the picker on the screen.
-        self.viewController?.present(picker, animated: true)
+        self.viewController?.present(self.currentPicker!, animated: true)
         //})
     }
 
@@ -89,6 +90,8 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
                 print("Error uploading file: \(error)")
             }
         }
+
+        self.currentPicker?.dismiss(animated: true, completion: nil)
     }
 
     func pickerStoredFile(picker: PickerNavigationController, response: StoreResponse) {
@@ -110,5 +113,7 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             // The store operation failed.
             print("Error storing file: \(error)")
         }
+
+        self.currentPicker?.dismiss(animated: true, completion: nil)
     }
 }
