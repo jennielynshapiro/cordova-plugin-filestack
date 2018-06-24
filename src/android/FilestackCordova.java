@@ -229,9 +229,7 @@ public class FilestackCordova extends CordovaPlugin {
 
         if(fileLink != null && fileLink.getHandle() != null) {
             String handle = fileLink.getHandle();
-            String key = handle + "_" + filename;
             res.put("handle", handle);
-            res.put("key", key);
         }
 
         return res;

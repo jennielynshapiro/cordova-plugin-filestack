@@ -8,13 +8,70 @@ function parseParams(params) {
     a.push(params.mimeTypes || null);
     return a;
 }
+var getFileKeyFromHandle = function(handle, callback) {
+
+    var url = "https://www.filestackapi.com/api/file/" + handle + "/metadata";
+
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4) {
+            if(xmlHttp.status == 200) {
+
+                try {
+
+                    var response = JSON.parse(this.responseText);
+
+                    if (response.key) {
+                        callback(null, response.key);
+                    } else {
+                        callback("Error: Unable to get file key");
+                    }
+
+                } catch (e) {
+                    callback("Error: Unable to get file key");
+                }
+
+            } else {
+                callback("Error: Unable to get file key");
+            }
+        }
+
+    };
+
+    xmlHttp.open("GET", url, true); // true for asynchronous
+    xmlHttp.send(null);
+
+};
+
+var processFileResult = function(result, callback) {
+
+    if(result && result.file && result.file.handle && !result.file.key) {
+
+        getFileKeyFromHandle(result.file.handle, function(error, key) {
+
+            if(error || !key) {
+                callback(error, null);
+            }
+
+            result.file.key = key;
+
+            callback(null, result);
+
+        });
+
+    } else {
+
+        callback(null, result);
+
+    }
+
+};
 
 var filestack = {
     openFilePicker: function(params, callback) {
         exec(
             function(result) {
-                // result
-                callback(null, result);
+                processFileResult(result, callback);
             },
             function(error) {
                 // error
