@@ -18,6 +18,7 @@ import com.filestack.android.FsConstants;
 import com.filestack.Sources;
 import com.filestack.android.Selection;
 import com.filestack.FileLink;
+import com.filestack.StorageOptions;
 
 import java.util.Locale;
 
@@ -98,6 +99,13 @@ public class FilestackCordova extends CordovaPlugin {
 
                 String[] mimeTypes = {"*/*"};
                 intent.putExtra(FsConstants.EXTRA_MIME_TYPES, mimeTypes);
+
+                StorageOptions storeOpts = new StorageOptions.Builder()
+                    .location("S3")
+                    .container("meldtables-filestack")
+                    .region("us-west-2")
+                    .build();
+                intent.putExtra(FsConstants.EXTRA_STORE_OPTS, storeOpts);
 
                 cordova.setActivityResultCallback(me);
                 cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
