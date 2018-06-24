@@ -5,7 +5,6 @@ import FilestackSDK
 class FilestackCordova : CDVPlugin {
 
     var currentCallbackId:String = ""
-    var currentPicker:PickerNavigationController?
 
     @objc(openFilePicker:)
     func openFilePicker(command: CDVInvokedUrlCommand) {
@@ -55,13 +54,13 @@ class FilestackCordova : CDVPlugin {
 
         let storeOptions = StorageOptions(location: .s3)
 
-        self.currentPicker = client.picker(storeOptions: storeOptions)
+        let currentPicker = client.picker(storeOptions: storeOptions)
 
         // Optional. Set the picker's delegate.
-        self.currentPicker?.pickerDelegate = self
+        currentPicker.pickerDelegate = self
 
         // Finally, present the picker on the screen.
-        self.viewController?.present(self.currentPicker!, animated: true)
+        self.viewController.present(currentPicker, animated: true)
         //})
     }
 
@@ -71,15 +70,16 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
 
     func pickerUploadedFiles(picker: PickerNavigationController, responses: [NetworkJSONResponse]) {
 
-        for response in responses {
+        //for response in responses {
+        for (index, response) in responses.enumerated() {
             if let contents = response.json {
                 // Our local file was stored into the destination location.
                 print("Uploaded file response: \(contents)")
 
-                let result:[String:Any] = ["file":contents, "complete":false];
+                let result:[String:Any] = ["file":contents, "complete":(responses.count - 1) == index];
 
                 let pluginResult = CDVPluginResult(status:CDVCommandStatus_OK, messageAs:result)
-                pluginResult?.setKeepCallbackAs(false)
+                pluginResult?.setKeepCallbackAs((responses.count - 1) != index)
                 self.commandDelegate!.send(
                     pluginResult,
                     callbackId: self.currentCallbackId
@@ -91,7 +91,6 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             }
         }
 
-        self.currentPicker?.dismiss(animated: true, completion: nil)
     }
 
     func pickerStoredFile(picker: PickerNavigationController, response: StoreResponse) {
@@ -100,7 +99,7 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             // Our cloud file was stored into the destination location.
             print("Stored file response: \(contents)")
 
-            let result:[String:Any] = ["file":contents, "complete":false];
+            let result:[String:Any] = ["file":contents, "complete":true];
 
             let pluginResult = CDVPluginResult(status:CDVCommandStatus_OK, messageAs:result)
             pluginResult?.setKeepCallbackAs(false)
@@ -114,6 +113,5 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             print("Error storing file: \(error)")
         }
 
-        self.currentPicker?.dismiss(animated: true, completion: nil)
     }
 }

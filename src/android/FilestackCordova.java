@@ -210,17 +210,28 @@ public class FilestackCordova extends CordovaPlugin {
 
         JSONObject res = new JSONObject();
 
+        String filename = "";
+
         if(selection != null) {
-            if(selection.getProvider() != null) { res.put("provider", selection.getProvider()); }
-            if(selection.getPath() != null) { res.put("path", selection.getPath()); }
-            if(selection.getUri() != null) { res.put("uri", selection.getUri().toString()); }
+
             res.put("size", selection.getSize());
-            if(selection.getMimeType() != null) { res.put("mimeType", selection.getMimeType()); }
-            if(selection.getName() != null) { res.put("name", selection.getName()); }
+
+            if(selection.getMimeType() != null) {
+                res.put("mimetype", selection.getMimeType());
+            }
+
+            if(selection.getName() != null) {
+                filename = selection.getName();
+                res.put("filename", filename);
+            }
+
         }
 
-        if(fileLink != null) {
-            if(fileLink.getHandle() != null) { res.put("fileLink", fileLink.getHandle()); }
+        if(fileLink != null && fileLink.getHandle() != null) {
+            String handle = fileLink.getHandle();
+            String key = handle + "_" + filename;
+            res.put("handle", handle);
+            res.put("key", key);
         }
 
         return res;
