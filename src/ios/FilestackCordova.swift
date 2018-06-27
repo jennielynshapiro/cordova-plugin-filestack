@@ -71,6 +71,8 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
 
     func pickerUploadedFiles(picker: PickerNavigationController, responses: [NetworkJSONResponse]) {
 
+        print("pickerUploadedFiles")
+
         //for response in responses {
         for (index, response) in responses.enumerated() {
             if let contents = response.json {
@@ -92,10 +94,13 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             }
         }
 
-     DispatchQueue.main.async { self.currentPicker?.dismiss(animated: true) }
+        print("self.currentPicker: \(self.currentPicker!)")
+        DispatchQueue.main.async { self.currentPicker!.dismiss(animated: true) }
     }
 
     func pickerStoredFile(picker: PickerNavigationController, response: StoreResponse) {
+
+        print("pickerStoredFile")
 
         if let contents = response.contents {
             // Our cloud file was stored into the destination location.
@@ -115,6 +120,8 @@ extension FilestackCordova: PickerNavigationControllerDelegate {
             print("Error storing file: \(error)")
         }
 
-        DispatchQueue.main.async { self.currentPicker?.dismiss(animated: true) }
+        print("self.currentPicker: \(self.currentPicker!)")
+        print("self.currentPicker: \(self.currentPicker!.presentingViewController!)")
+        DispatchQueue.main.async { self.currentPicker?.presentingViewController?.dismiss(animated: true) }
     }
 }
