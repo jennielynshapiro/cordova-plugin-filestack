@@ -26,6 +26,7 @@ import java.util.Locale;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -122,7 +123,7 @@ public class FilestackCordova extends CordovaPlugin {
     private void parseSources(Intent intent, JSONArray args) throws JSONException {
         if (!args.isNull(1)) {
             String[] sources = this.parseJSONStringArray(args.getJSONArray(1));
-            intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
+            intent.putExtra(FsConstants.EXTRA_SOURCES, Arrays.asList(sources));
         }
     }
 
