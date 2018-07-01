@@ -92,7 +92,7 @@ public class FilestackCordova extends CordovaPlugin {
                     me.parseMimeTypes(intent, args);
                     me.parseStorageOptions(intent, args);
                 } catch (JSONException e) {
-                    Log.v("FilestackCordova", e.getStackTrace());
+                    Log.v("FilestackCordova", e.toString());
                 }
 
                 cordova.setActivityResultCallback(me);
