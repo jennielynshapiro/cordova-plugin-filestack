@@ -86,10 +86,14 @@ public class FilestackCordova extends CordovaPlugin {
                 Context context = cordova.getActivity().getApplicationContext();
                 Intent intent = new Intent(context, FsActivity.class);
 
-                me.parseConfig(intent, args);
-                me.parseSources(intent, args);
-                me.parseMimeTypes(intent, args);
-                me.parseStorageOptions(intent, args);
+                try {
+                    me.parseConfig(intent, args);
+                    me.parseSources(intent, args);
+                    me.parseMimeTypes(intent, args);
+                    me.parseStorageOptions(intent, args);
+                } catch (JSONException e) {
+                    Log.v("FilestackCordova", e.getStackTrace());
+                }
 
                 cordova.setActivityResultCallback(me);
                 cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
