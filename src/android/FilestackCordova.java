@@ -12,6 +12,7 @@ import android.util.Log;
 import android.content.Context;
 
 import android.content.Intent;
+
 import com.filestack.Config;
 import com.filestack.android.FsActivity;
 import com.filestack.android.FsConstants;
@@ -53,27 +54,27 @@ public class FilestackCordova extends CordovaPlugin {
 
     private HashMap<String, CallbackContext> selectionCallbacks = new HashMap<String, CallbackContext>();
 
-	@Override
-	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-   	 	Log.v("FilestackCordova", "execute");
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        Log.v("FilestackCordova", "execute");
 
-   	 	this.callbackContext = callbackContext;
+        this.callbackContext = callbackContext;
 
-   	 	if (action.equals("openFilePicker")) {
+        if (action.equals("openFilePicker")) {
 
-    	   this.openFilePicker(args);
+            this.openFilePicker(args);
 
-    	   PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT);
-           pluginResult.setKeepCallback(true);
-           callbackContext.sendPluginResult(pluginResult);
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
+            pluginResult.setKeepCallback(true);
+            callbackContext.sendPluginResult(pluginResult);
 
-    	   return true;
-   	 	}
+            return true;
+        }
 
-   	 	return false;
-	}
+        return false;
+    }
 
-	private void openFilePicker(JSONArray args) {
+    private void openFilePicker(JSONArray args) {
 
         final FilestackCordova me = this;
 
@@ -95,27 +96,27 @@ public class FilestackCordova extends CordovaPlugin {
 
             }
         });
-	}
+    }
 
-	private void parseConfig(Intent intent, JSONArray args) throws JSONException {
+    private void parseConfig(Intent intent, JSONArray args) throws JSONException {
 
-	    String apiKey = "";
-	    String returnUrl = "";
+        String apiKey = "";
+        String returnUrl = "";
 
-	    if (!args.isNull(0)) {
-	        apiKey = args.getString(0);
-	    }
+        if (!args.isNull(0)) {
+            apiKey = args.getString(0);
+        }
 
-	    if (!args.isNull(3)) {
+        if (!args.isNull(3)) {
             returnUrl = args.getString(3);
         }
 
         Config config = new Config(apiKey, returnUrl);
         intent.putExtra(FsConstants.EXTRA_CONFIG, config);
-	}
+    }
 
-	private void parseSources(Intent intent, JSONArray args) throws JSONException {
-	    if (!args.isNull(1)) {
+    private void parseSources(Intent intent, JSONArray args) throws JSONException {
+        if (!args.isNull(1)) {
             String[] sources = this.parseJSONStringArray(args.getJSONArray(1));
             intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
         }
@@ -151,103 +152,102 @@ public class FilestackCordova extends CordovaPlugin {
 
     public String[] parseJSONStringArray(JSONArray jSONArray) throws JSONException {
         String[] a = new String[jSONArray.length()];
-        for(int i = 0; i < jSONArray.length(); i++){
+        for (int i = 0; i < jSONArray.length(); i++) {
             a[i] = jSONArray.getString(i);
         }
         return a;
     }
 
-	    @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-            super.onActivityResult(requestCode, resultCode, data);
-            Log.i("FilestackCordova", "onActivityResult " + resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("FilestackCordova", "onActivityResult " + resultCode);
+        Locale locale = Locale.getDefault();
+
+        if (requestCode == REQUEST_FILESTACK && resultCode == Activity.RESULT_OK) {
+            Log.i("FilestackCordova", "received filestack selections");
+            String key = FsConstants.EXTRA_SELECTION_LIST;
+            ArrayList<Selection> selections = data.getParcelableArrayListExtra(key);
+            for (int i = 0; i < selections.size(); i++) {
+                Selection selection = selections.get(i);
+                String msg = String.format(locale, "selection %d: %s", i, selection.getName());
+
+                selectionCallbacks.put(getSelectionKey(selection), callbackContext);
+
+                Log.i("FilestackCordova", msg);
+            }
+        }
+
+    }
+
+    private String getSelectionKey(Selection selection) {
+        String key = "";
+        if (selection.getPath() != null) {
+            key = selection.getPath();
+        } else if (selection.getUri() != null) {
+            key = selection.getUri().toString();
+        }
+        Log.i("FilestackCordova", "selection key: " + key);
+        return key;
+    }
+
+    public class UploadStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
             Locale locale = Locale.getDefault();
+            String status = intent.getStringExtra(FsConstants.EXTRA_STATUS);
+            Selection selection = intent.getParcelableExtra(FsConstants.EXTRA_SELECTION);
+            FileLink fileLink = (FileLink) intent.getSerializableExtra(FsConstants.EXTRA_FILE_LINK);
 
-            if (requestCode == REQUEST_FILESTACK && resultCode == Activity.RESULT_OK) {
-                Log.i("FilestackCordova", "received filestack selections");
-                String key = FsConstants.EXTRA_SELECTION_LIST;
-                ArrayList<Selection> selections = data.getParcelableArrayListExtra(key);
-                for (int i = 0; i < selections.size(); i++) {
-                    Selection selection = selections.get(i);
-                    String msg = String.format(locale, "selection %d: %s", i, selection.getName());
+            String name = selection.getName();
+            String handle = fileLink != null ? fileLink.getHandle() : "n/a";
+            String msg = String.format(locale, "upload %s: %s (%s)", status, name, handle);
+            Log.i("UploadStatusReceiver", msg);
 
-                    selectionCallbacks.put(getSelectionKey(selection), callbackContext);
 
-                    Log.i("FilestackCordova", msg);
-                }
+            // get callback context
+
+            if (selection == null) {
+                return;
             }
 
-        }
-
-        private String getSelectionKey(Selection selection) {
-            String key = "";
-            if(selection.getPath() != null) {
-                key = selection.getPath();
-            } else if(selection.getUri() != null) {
-                key = selection.getUri().toString();
+            if (fileLink == null) {
+                return;
             }
-            Log.i("FilestackCordova", "selection key: " + key);
-            return key;
-        }
 
-        public class UploadStatusReceiver extends BroadcastReceiver {
+            CallbackContext selectionCallbackContext = selectionCallbacks.remove(getSelectionKey(selection));
 
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Locale locale = Locale.getDefault();
-                String status = intent.getStringExtra(FsConstants.EXTRA_STATUS);
-                Selection selection = intent.getParcelableExtra(FsConstants.EXTRA_SELECTION);
-                FileLink fileLink = (FileLink) intent.getSerializableExtra(FsConstants.EXTRA_FILE_LINK);
+            Log.i("FilestackCordova", "selectionCallbackContext: " + (selectionCallbackContext != null ? selectionCallbackContext.toString() : "null"));
 
-                String name = selection.getName();
-                String handle = fileLink != null ? fileLink.getHandle() : "n/a";
-                String msg = String.format(locale, "upload %s: %s (%s)", status, name, handle);
-                Log.i("UploadStatusReceiver", msg);
+            if (selectionCallbackContext == null) {
+                return;
+            }
 
+            try {
 
-                // get callback context
+                JSONObject selectionJson = selectionToJson(selection, fileLink);
 
-                if(selection == null) {
-                    return;
+                if (selectionCallbacks.containsValue(selectionCallbackContext)) {
+
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, resultToJson(selectionJson, false));
+                    pluginResult.setKeepCallback(true); // keep callback
+                    selectionCallbackContext.sendPluginResult(pluginResult);
+
+                } else {
+
+                    selectionCallbackContext.success(resultToJson(selectionJson, true));
+
                 }
 
-                if(fileLink == null) {
-                    return;
-                }
-
-                    CallbackContext selectionCallbackContext = selectionCallbacks.remove(getSelectionKey(selection));
-
-                    Log.i("FilestackCordova", "selectionCallbackContext: " + (selectionCallbackContext != null ? selectionCallbackContext.toString() : "null"));
-
-                    if(selectionCallbackContext == null) {
-                        return;
-                    }
-
-                    try {
-
-                    JSONObject selectionJson = selectionToJson(selection, fileLink);
-
-                    if(selectionCallbacks.containsValue(selectionCallbackContext)) {
-
-                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, resultToJson(selectionJson, false));
-                        pluginResult.setKeepCallback(true); // keep callback
-                        selectionCallbackContext.sendPluginResult(pluginResult);
-
-                    } else {
-
-                        selectionCallbackContext.success(resultToJson(selectionJson, true));
-
-                    }
-
-                    } catch(JSONException exception) {
-                        callbackContext.error("cannot parse json");
-                    }
-
-
-
+            } catch (JSONException exception) {
+                callbackContext.error("cannot parse json");
             }
+
+
         }
+    }
 
     public JSONObject resultToJson(JSONObject selectionJson, boolean complete) throws JSONException {
         JSONObject res = new JSONObject();
@@ -262,22 +262,22 @@ public class FilestackCordova extends CordovaPlugin {
 
         String filename = "";
 
-        if(selection != null) {
+        if (selection != null) {
 
             res.put("size", selection.getSize());
 
-            if(selection.getMimeType() != null) {
+            if (selection.getMimeType() != null) {
                 res.put("mimetype", selection.getMimeType());
             }
 
-            if(selection.getName() != null) {
+            if (selection.getName() != null) {
                 filename = selection.getName();
                 res.put("filename", filename);
             }
 
         }
 
-        if(fileLink != null && fileLink.getHandle() != null) {
+        if (fileLink != null && fileLink.getHandle() != null) {
             String handle = fileLink.getHandle();
             res.put("handle", handle);
         }
