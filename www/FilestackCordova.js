@@ -2,13 +2,21 @@ var exec = require('cordova/exec');
 
 function parseParams(params) {
     var a = [];
+
     a.push(params.apiKey || null);
-    a.push(params.returnUrl || null);
     a.push(params.sources || null);
     a.push(params.mimeTypes || null);
+    a.push(params.returnUrl || null);
+    a.push(params.appURLScheme || null);
+    a.push(params.location || null);
+    a.push(params.container || null);
+    a.push(params.region || null);
+
     return a;
+
 }
-var getFileKeyFromHandle = function(handle, callback) {
+
+function getFileKeyFromHandle(handle, callback) {
 
     var url = "https://www.filestackapi.com/api/file/" + handle + "/metadata";
 
@@ -41,9 +49,9 @@ var getFileKeyFromHandle = function(handle, callback) {
     xmlHttp.open("GET", url, true); // true for asynchronous
     xmlHttp.send(null);
 
-};
+}
 
-var processFileResult = function(result, callback) {
+function processFileResult(result, callback) {
 
     if(result && result.file && result.file.handle && !result.file.key) {
 
@@ -65,7 +73,7 @@ var processFileResult = function(result, callback) {
 
     }
 
-};
+}
 
 var filestack = {
     openFilePicker: function(params, callback) {

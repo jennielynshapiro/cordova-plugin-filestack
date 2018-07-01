@@ -60,10 +60,8 @@ public class FilestackCordova extends CordovaPlugin {
    	 	this.callbackContext = callbackContext;
 
    	 	if (action.equals("openFilePicker")) {
-     	   String apiKey = args.getString(0);
-     	   String returnUrl = args.getString(1);
 
-    	   this.openFilePicker(apiKey, returnUrl);
+    	   this.openFilePicker(args);
 
     	   PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT);
            pluginResult.setKeepCallback(true);
@@ -75,45 +73,89 @@ public class FilestackCordova extends CordovaPlugin {
    	 	return false;
 	}
 
-	private void openFilePicker(String apiKey, String returnUrl) {
+	private void openFilePicker(JSONArray args) {
 
         final FilestackCordova me = this;
 
         this.cordova.getThreadPool().execute(new Runnable() {
             public void run() {
 
-
                 Log.v("FilestackCordova", "openFilePicker");
 
                 Context context = cordova.getActivity().getApplicationContext();
                 Intent intent = new Intent(context, FsActivity.class);
 
-                Config config = new Config(apiKey, returnUrl);
-                intent.putExtra(FsConstants.EXTRA_CONFIG, config);
-
-                ArrayList<String> sources = new ArrayList<>();
-                sources.add(Sources.DEVICE);
-                sources.add(Sources.GOOGLE_DRIVE);
-                sources.add(Sources.GITHUB);
-                intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
-
-                String[] mimeTypes = {"*/*"};
-                intent.putExtra(FsConstants.EXTRA_MIME_TYPES, mimeTypes);
-
-                StorageOptions storeOpts = new StorageOptions.Builder()
-                    .location("S3")
-                    .container("meldtables-filestack")
-                    .region("us-west-2")
-                    .build();
-                intent.putExtra(FsConstants.EXTRA_STORE_OPTS, storeOpts);
+                me.parseConfig(intent, args);
+                me.parseSources(intent, args);
+                me.parseMimeTypes(intent, args);
+                me.parseStorageOptions(intent, args);
 
                 cordova.setActivityResultCallback(me);
                 cordova.startActivityForResult(me, intent, REQUEST_FILESTACK);
 
-
             }
         });
 	}
+
+	private void parseConfig(Intent intent, JSONArray args) throws JSONException {
+
+	    String apiKey = "";
+	    String returnUrl = "";
+
+	    if (!args.isNull(0)) {
+	        apiKey = args.getString(0);
+	    }
+
+	    if (!args.isNull(3)) {
+            returnUrl = args.getString(3);
+        }
+
+        Config config = new Config(apiKey, returnUrl);
+        intent.putExtra(FsConstants.EXTRA_CONFIG, config);
+	}
+
+	private void parseSources(Intent intent, JSONArray args) throws JSONException {
+	    if (!args.isNull(1)) {
+            String[] sources = this.parseJSONStringArray(args.getJSONArray(1));
+            intent.putExtra(FsConstants.EXTRA_SOURCES, sources);
+        }
+    }
+
+    private void parseMimeTypes(Intent intent, JSONArray args) throws JSONException {
+        if (!args.isNull(2)) {
+            String[] mimeTypes = this.parseJSONStringArray(args.getJSONArray(2));
+            intent.putExtra(FsConstants.EXTRA_MIME_TYPES, mimeTypes);
+        }
+    }
+
+    private void parseStorageOptions(Intent intent, JSONArray args) throws JSONException {
+
+        StorageOptions.Builder builder = new StorageOptions.Builder();
+
+        if (!args.isNull(5)) {
+            builder.location(args.getString(5));
+        }
+
+        if (!args.isNull(6)) {
+            builder.container(args.getString(6));
+        }
+
+        if (!args.isNull(7)) {
+            builder.region(args.getString(7));
+        }
+
+        StorageOptions storeOpts = builder.build();
+        intent.putExtra(FsConstants.EXTRA_STORE_OPTS, storeOpts);
+
+    }
+
+    public String[] parseJSONStringArray(JSONArray jSONArray) throws JSONException {
+        String[] a = new String[jSONArray.length()];
+        for(int i = 0; i < jSONArray.length(); i++){
+            a[i] = jSONArray.getString(i);
+        }
+        return a;
+    }
 
 	    @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -243,6 +285,4 @@ public class FilestackCordova extends CordovaPlugin {
         return res;
 
     }
-
-        // adb logcat -s "UploadStatusReceiver","FilestackCordova"
 }
