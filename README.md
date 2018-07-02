@@ -35,6 +35,32 @@ https://developer.android.com/training/app-links/
 
 ## Usage
 
+Open the picker using
+```
+window.filestack.openFilePicker(params, callback)'
+```
+
+### Params
+ * ```apiKey``` string : Your filestack api key.
+ * ```sources``` string array : An array of sources.
+ * ```mimeTypes``` string array : An array of mime type selector.
+ * ```returnUrl``` string : App link for Android
+ * ```appURLScheme``` string : Url scheme for iOS
+ * ```location``` string : Storage location
+ * ```container``` string : Storage container
+ * ```region``` string : Storage region
+ 
+### Response
+The call back should accept (error, result)
+Result is an object with a file property and a complete property. The callback will be called once for each file uploaded. The last callback will have the complete property set to true;
+File Properties:
+ * ```filename``` string : File name
+ * ```size``` string int : Size in bytes
+ * ```mimetype``` string : Mime Type
+ * ```handle``` string : Filestack file identifier
+ * ```key``` string : Storage key
+
+### Example
 ```
  let files = [];
 
