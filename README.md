@@ -14,7 +14,7 @@ cordova plugin add https://github.com/jennielynshapiro/cordova-plugin-filestack.
 ## iOS Setup
 
 ### Installing CocoaPods
-CocoaPods dependency manager is used for iOS 
+CocoaPods dependency manager is required for iOS 
 https://cocoapods.org/
 ```
 sudo gem install cocoapods
