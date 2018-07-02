@@ -1,10 +1,10 @@
 # Filestack Cordova
 Filestack plugin for Cordova. Available for Android and iOS
 
-Combines Filestack's native Android (https://github.com/filestack/filestack-android) and iOS (https://github.com/filestack/filestack-ios) SDKs into a Cordova pligin.
+Combines Filestack's native Android (https://github.com/filestack/filestack-android) and iOS (https://github.com/filestack/filestack-ios) SDKs into a Cordova plugin.
 
-A completeley rewritten version of https://github.com/dbaq/cordova-plugin-filepickerio. 
-The iOS native library used in that project have been depreciated. The Android implementation does not support app links.
+A completely rewritten version of https://github.com/dbaq/cordova-plugin-filepickerio. 
+The iOS native library used in that project has been depreciated. The Android implementation does not support app links wich is required for at least Google oAuth flows.
 
 ## Installing the plugin ##
 ```
@@ -24,7 +24,7 @@ Add a url scheme to your info.plst
 https://coderwall.com/p/mtjaeq/ios-custom-url-scheme
 
 ### Framework Swift Version in Xcode
-The swift version for each framework has to me manually set in xcode.
+The swift version for each framework has to me manually set in Xcode.
 
 ## Android Setup
 
