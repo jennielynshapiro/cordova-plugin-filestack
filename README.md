@@ -13,8 +13,9 @@ cordova plugin add https://github.com/jennielynshapiro/cordova-plugin-filestack.
 
 ## iOS Setup
 
-### Installing the CocoaPods
-CocoaPods dependency manager is used for iOS https://cocoapods.org/
+### Installing CocoaPods
+CocoaPods dependency manager is used for iOS 
+https://cocoapods.org/
 ```
 sudo gem install cocoapods
 ```
@@ -29,6 +30,7 @@ The swift version for each framework has to me manually set in Xcode.
 ## Android Setup
 
 ### App Links
+App links should be setup and working.
 https://developer.android.com/training/app-links/
 
 ## Usage
