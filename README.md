@@ -51,8 +51,8 @@ window.filestack.openFilePicker(params, callback)'
  * ```region``` string : Storage region
  
 ### Response
-The call back should accept (error, result)
-Result is an object with a file property and a complete property. The callback will be called once for each file uploaded. The last callback will have the complete property set to true;
+The callback should accept (error, result). Result is an object with a file object property and a boolean complete property. The callback will be called once for each file uploaded. The last callback will have the complete property set to true.
+
 File Properties:
  * ```filename``` string : File name
  * ```size``` string int : Size in bytes
