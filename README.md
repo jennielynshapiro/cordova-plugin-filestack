@@ -37,7 +37,7 @@ https://developer.android.com/training/app-links/
 
 Open the picker using
 ```
-window.filestack.openFilePicker(params, callback)'
+window.filestack.openFilePicker(params, callback)
 ```
 
 ### Params
