@@ -36,7 +36,7 @@ https://developer.android.com/training/app-links/
 ```
  let files = [];
 
-      _window.filestack.openFilePicker({
+      window.filestack.openFilePicker({
         apiKey: "YOUR_API_KEY",
         sources: ["device", "googledrive", "facebook", "instagram", "dropbox", "box", "github", "gmail", "picasa", "onedrive", "clouddrive"],
         mimeTypes: ["*/*"],
