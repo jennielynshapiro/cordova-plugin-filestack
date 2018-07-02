@@ -33,11 +33,11 @@ The swift version for each framework has to me manually set in Xcode.
 App links should be setup and working.
 https://developer.android.com/training/app-links/
 
-Set the APP_LINK_HOST variable in your confix.xml
+Set the APP_LINK_HOST variable in your config.xml
 ```
-    <plugin name="cordova-plugin-filestack" spec="https://github.com/jennielynshapiro/cordova-plugin-filestack.git">
-        <variable name="APP_LINK_HOST" value="demo.filestack.com" />
-    </plugin>
+<plugin name="cordova-plugin-filestack" spec="https://github.com/jennielynshapiro/cordova-plugin-filestack.git">
+   <variable name="APP_LINK_HOST" value="demo.filestack.com" />
+</plugin>
 ```
 ## Usage
 
