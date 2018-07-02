@@ -96,7 +96,7 @@ File Properties:
       });
 ```
 
-## Usage
+## Notes
 
 * Currently the iOS implementation only supports appURLScheme and the Android implemntation only supports returnUrl.
 * The iOS implementation does not support filtering mime types.
