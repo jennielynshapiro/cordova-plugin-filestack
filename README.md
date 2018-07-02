@@ -70,5 +70,5 @@ https://developer.android.com/training/app-links/
 
 ## Usage
 
-* Currently the iOS implementation only supports appURLScheme and the Android implemntation only supports returnUrl;
+* Currently the iOS implementation only supports appURLScheme and the Android implemntation only supports returnUrl.
 * The iOS implementation does not support filtering mime types.
